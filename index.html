@@ -1,24 +1,532 @@
- <!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Roman_MASSE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rambobinator — Roman Masse</title>
+<meta name="description" content="Roman Masse, a.k.a. rambobinator. Lead software engineer for AI solutions at Septeo, former cook in Michelin-starred restaurants.">
+<meta name="theme-color" content="#efe7d6">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://roman.masse.family/">
+<meta property="og:title" content="rambobinator — Roman Masse">
+<meta property="og:description" content="Lead software engineer for AI solutions at Septeo, former cook in Michelin-starred restaurants.">
+<meta property="og:image" content="https://roman.masse.family/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root {
+    --paper: #efe7d6;
+    --ink: #24221f;
+    --shell: #2b2926;
+    --red: #d7263d;
+    --amber: #f2a900;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 3.5rem 1.25rem 3rem;
+    min-height: 100vh;
+    text-align: center;
+  }
+  #k7 {
+    width: min(560px, 92vw);
+    height: auto;
+    overflow: visible;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    letter-spacing: 0.04em;
+  }
+  p { margin: 0; max-width: 36rem; line-height: 1.6; }
+  p a { color: inherit; text-decoration-color: var(--red); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  p.just { text-align: justify; hyphens: auto; -webkit-hyphens: auto; width: min(36rem, 100%); }
+  .hint { font-size: 0.8rem; opacity: 0.6; }
+
+  /* Track list: the pinned projects, J-card style */
+  .tracks { width: min(36rem, 100%); text-align: left; margin-top: 0.5rem; }
+  .tracks h2 {
+    margin: 0 0 0.3rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 0.35rem;
+  }
+  .tracks ol { list-style: none; margin: 0; padding: 0; counter-reset: track; }
+  .tracks li { counter-increment: track; border-bottom: 1px dashed rgba(36, 34, 31, 0.35); }
+  .tracks a {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    column-gap: 0.4rem;
+    padding: 0.55rem 0.4rem;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .tracks a::before {
+    content: "A" counter(track);
+    grid-row: span 2;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .tracks .t { font-weight: 700; }
+  .tracks .d { font-size: 0.85rem; opacity: 0.75; line-height: 1.45; }
+  .tracks a:hover, .tracks a:focus-visible { background: rgba(242, 169, 0, 0.25); outline: none; }
+
+  /* Deck: links as the piano keys of an old radio-cassette player */
+  .deck {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    row-gap: 14px;
+    margin-top: 0.75rem;
+    padding: 10px 10px 18px;
+    background: #1a1917;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 0 #3a3733, 0 5px 0 #0d0c0b;
+  }
+  .key {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+    min-width: 5.4rem;
+    padding: 0.6rem 0.7rem 0.75rem;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    background: linear-gradient(#e9e2d1, #cbc3b0);
+    border: 0;
+    border-radius: 3px 3px 6px 6px;
+    box-shadow: inset 0 1px 0 #fffaf0, 0 7px 0 #8f8878, 0 9px 5px rgba(0, 0, 0, 0.55);
+    cursor: pointer;
+    transition: transform 0.1s cubic-bezier(0.3, 1.7, 0.6, 1), box-shadow 0.1s, background 0.1s;
+  }
+  /* keeps the pointer "on" the key while it travels down */
+  .key::after { content: ""; position: absolute; inset: -8px 0 -8px 0; }
+  .key .led {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #5b1620;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+    transition: background 0.1s, box-shadow 0.1s;
+  }
+  .key:hover, .key:focus-visible {
+    transform: translateY(6px);
+    background: linear-gradient(#d9d2c0, #bdb5a2);
+    box-shadow: inset 0 1px 0 #f3ecdb, 0 1px 0 #8f8878, 0 2px 2px rgba(0, 0, 0, 0.55);
+    outline: none;
+  }
+  .key:active { transform: translateY(7px); }
+  .key:hover .led, .key:focus-visible .led { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  #rewind { color: var(--red); }
+  #rewind:hover .led, #rewind:focus-visible .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+  /* Language slide switch */
+  #lang {
+    position: absolute; top: 1rem; right: 1rem;
+    display: flex; align-items: center; gap: 0.45rem;
+    font: inherit; font-size: 0.75rem; font-weight: 700; color: var(--ink);
+    background: none; border: 0; padding: 0.3rem; cursor: pointer;
+  }
+  #lang .slot {
+    position: relative; width: 34px; height: 16px; border-radius: 4px;
+    background: var(--shell); box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.6);
+  }
+  #lang .slot::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 12px; border-radius: 2px;
+    background: linear-gradient(#e9e2d1, #cbc3b0);
+    transition: transform 0.12s cubic-bezier(0.3, 1.7, 0.6, 1);
+  }
+  html[lang="fr"] #lang .slot::after { transform: translateX(16px); }
+  #lang span { opacity: 0.4; }
+  html[lang="en"] #lang .en, html[lang="fr"] #lang .fr { opacity: 1; }
+  #lang:focus-visible { outline: 2px solid var(--red); border-radius: 4px; }
+
+  @media (max-width: 30rem) { .key { min-width: 4.6rem; } }
+  @media (prefers-reduced-motion: reduce) { .key, #lang .slot::after { transition: none; } }
+</style>
 </head>
 <body>
 
-<h1>Welcome on my page !</h1>
+<svg id="k7" viewBox="0 0 640 470" role="img"
+     aria-label="An audio cassette that looks like a face: its reels are eyes and its loose magnetic tape is a mouth that follows your pointer. Click it to rewind.">
+  <!-- headband tails (behind the shell) -->
+  <path id="tail1" fill="none" stroke="#d7263d" stroke-width="13" stroke-linecap="round"/>
+  <path id="tail2" fill="none" stroke="#b01e31" stroke-width="11" stroke-linecap="round"/>
 
-<p>I'm a former student at <a href="http://www.42.fr">42 computer science school</a>, and passionate about cuisine which was my previous job.</p>
+  <!-- shell -->
+  <rect x="40" y="20" width="560" height="340" rx="22" fill="#2b2926"/>
+  <rect x="48" y="28" width="544" height="324" rx="16" fill="none" stroke="#3a3733" stroke-width="2"/>
 
-<h4>Here are some links about me :</h4>
+  <!-- label -->
+  <rect x="70" y="42" width="500" height="225" rx="10" fill="#f6efdf"/>
+  <rect x="70" y="236" width="500" height="9" fill="#f2a900"/>
+  <rect x="70" y="249" width="500" height="5" fill="#d7263d"/>
+  <text x="92" y="118" font-family="'Bradley Hand','Segoe Print','Comic Sans MS',cursive" font-size="34" font-weight="700" fill="#24221f">rambobinator</text>
+  <line x1="92" y1="128" x2="548" y2="128" stroke="#24221f" stroke-opacity=".25" stroke-width="1.5"/>
+  <text x="548" y="116" text-anchor="end" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="16" fill="#24221f" fill-opacity=".6">A · C90</text>
+  <text id="counter" x="548" y="228" text-anchor="end" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="14" fill="#24221f" fill-opacity=".6">000</text>
 
- <ul>
-  <li><a href="https://registry.jsonresume.org/rambobinator">Resume</a></li>
-  <li><a href="https://www.linkedin.com/in/roman-masse">Linkedin</a></li>
-  <li><a href="https://github.com/rambobinator">Github</a></li>
-  <li><a href="mailto:roman.masse@gmail.com">Mail</a></li>
-  <li><a href="rmasse.vcf">vCard</a></li>
-</ul>
+  <!-- headband -->
+  <rect x="40" y="50" width="560" height="24" fill="#d7263d"/>
+  <rect x="40" y="68" width="560" height="6" fill="#b01e31"/>
+  <ellipse cx="603" cy="62" rx="11" ry="15" fill="#b01e31"/>
 
+  <!-- window -->
+  <rect x="150" y="138" width="340" height="94" rx="47" fill="#151412"/>
+  <circle id="spoolL" cx="220" cy="185" r="40" fill="#5a3a22"/>
+  <circle id="spoolR" cx="420" cy="185" r="30" fill="#5a3a22"/>
+
+  <!-- nose: transport indicator -->
+  <g id="nosePlay" fill="#f2a900"><polygon points="312,175 312,195 330,185"/></g>
+  <g id="noseRew" fill="#d7263d" visibility="hidden">
+    <polygon points="320,175 320,195 303,185"/><polygon points="338,175 338,195 321,185"/>
+  </g>
+
+  <!-- eyes: reel hubs -->
+  <g id="hubL"></g>
+  <g id="hubR"></g>
+  <rect x="150" y="138" width="340" height="94" rx="47" fill="none" stroke="#24221f" stroke-width="4"/>
+
+  <!-- bottom trapezoid -->
+  <polygon points="128,360 160,288 480,288 512,360" fill="#33302c" stroke="#45413c" stroke-width="2"/>
+  <circle cx="190" cy="328" r="9" fill="#151412"/>
+  <circle cx="450" cy="328" r="9" fill="#151412"/>
+  <rect x="262" y="318" width="14" height="14" rx="2" fill="#151412"/>
+  <rect x="364" y="318" width="14" height="14" rx="2" fill="#151412"/>
+
+  <!-- screws -->
+  <g fill="#55514b" stroke="#151412" stroke-width="1.5">
+    <circle cx="58" cy="38" r="6"/><circle cx="582" cy="38" r="6"/>
+    <circle cx="58" cy="342" r="6"/><circle cx="582" cy="342" r="6"/>
+  </g>
+
+  <!-- mouth: a single strand of magnetic tape pulled out of the shell -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path id="mouth" stroke="#5a3a22" stroke-width="9"/>
+    <path id="mouthHi" stroke="#9a6a40" stroke-width="2"/>
+  </g>
+</svg>
+
+<h1>rambobinator</h1>
+
+<p class="just" data-i18n="intro">Hi, I'm Roman Masse, lead software engineer for AI solutions
+  at <a href="https://www.septeo.com/">Septeo</a>, based near Paris. Before that, I spent almost
+  ten years at <a href="https://numberly.com">Numberly</a> building ad-tech and data tools in
+  Python, after training at <a href="https://www.42.fr">42</a>.</p>
+
+<p class="just" data-i18n="cook">Before code, there was cooking: I worked in Michelin-starred
+  restaurants and taught cooking classes in Canada.</p>
+
+<section class="tracks" aria-labelledby="side-a">
+  <h2 id="side-a" data-i18n="tracks">Side A · pinned projects</h2>
+  <ol>
+    <li><a href="https://github.com/rambobinator/envfrom"><span class="t">envfrom</span>
+      <span class="d" data-i18n="p1">Run a program locally with the environment of a Kubernetes Secret or ConfigMap, Vault, a .env file…</span></a></li>
+    <li><a href="https://github.com/rambobinator/PlantWatering"><span class="t">PlantWatering</span>
+      <span class="d" data-i18n="p2">Reminds dreamy coworkers on Mattermost to water the office plants.</span></a></li>
+    <li><a href="https://github.com/rambobinator/freemobile-SMS-notifications"><span class="t">freemobile-SMS-notifications</span>
+      <span class="d" data-i18n="p3">Send SMS notifications to your own Free Mobile phone from any connected device.</span></a></li>
+    <li><a href="https://github.com/rambobinator/mentimeter_flooder"><span class="t">mentimeter_flooder</span>
+      <span class="d" data-i18n="p4">A script that floods Mentimeter polls with votes.</span></a></li>
+    <li><a href="https://github.com/rambobinator/chat256"><span class="t">chat256</span>
+      <span class="d" data-i18n="p5">Client-side SHA-256 hash generator, with a cat.</span></a></li>
+    <li><a href="https://github.com/rambobinator/battle_dev_2018"><span class="t">battle_dev_2018</span>
+      <span class="d" data-i18n="p6">My solutions to the 2018 Battle Dev coding contest.</span></a></li>
+  </ol>
+</section>
+
+<nav class="deck" aria-label="Links about me">
+  <a class="key" href="https://registry.jsonresume.org/rambobinator"><i class="led"></i><span data-i18n="resume">Resume</span></a>
+  <a class="key" href="https://www.linkedin.com/in/roman-masse"><i class="led"></i>LinkedIn</a>
+  <a class="key" href="https://github.com/rambobinator"><i class="led"></i>GitHub</a>
+  <a class="key" id="mail" href="#"><i class="led"></i><span data-i18n="mail">Mail</span></a>
+  <a class="key" href="rmasse.vcf"><i class="led"></i>vCard</a>
+  <button class="key" id="rewind" type="button" aria-label="Rewind the tape"><i class="led"></i>◀◀&#xFE0E; REW</button>
+</nav>
+
+<p class="hint" data-i18n="hint">move around · scroll to spin · click the tape to rewind</p>
+
+<button id="lang" type="button" aria-label="Langue / Language">
+  <span class="en">EN</span><i class="slot"></i><span class="fr">FR</span>
+</button>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const svg = $('k7');
+  const NS = 'http://www.w3.org/2000/svg';
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Mail address assembled here to keep it out of the markup.
+  $('mail').href = 'mailto:' + ['roman.masse', 'gmail.com'].join('@');
+
+  // English lives in the markup; French is swapped in on demand.
+  const FR = {
+    intro: `Bonjour, je suis Roman Masse, lead software engineer sur les solutions d'IA
+      chez <a href="https://www.septeo.com/">Septeo</a>, près de Paris. Avant cela, j'ai passé près
+      de dix ans chez <a href="https://numberly.com">Numberly</a> à construire des outils ad-tech
+      et data en Python, après une formation à <a href="https://www.42.fr">42</a>.`,
+    cook: `Avant le code, il y avait la cuisine : j'ai travaillé dans des restaurants
+      étoilés et donné des cours de cuisine au Canada.`,
+    tracks: 'Face A · projets épinglés',
+    p1: `Lancer un programme en local avec l'environnement d'un Secret ou ConfigMap Kubernetes, de Vault, d'un fichier .env…`,
+    p2: `Rappelle sur Mattermost aux collègues rêveurs d'arroser les plantes du bureau.`,
+    p3: `Envoyer des notifications SMS sur son propre forfait Free Mobile depuis n'importe quel appareil connecté.`,
+    p4: `Un script qui inonde de votes les sondages Mentimeter.`,
+    p5: `Générateur de hash SHA-256 côté client, avec un chat.`,
+    p6: `Mes solutions au concours de code Battle Dev 2018.`,
+    resume: 'CV',
+    mail: 'E-mail',
+    hint: 'bougez la souris · défilez pour faire tourner · cliquez sur la cassette pour rembobiner',
+  };
+  const EN = {};
+  const i18nEls = document.querySelectorAll('[data-i18n]');
+  for (const el of i18nEls) EN[el.dataset.i18n] = el.innerHTML;
+  function setLang(lang) {
+    const dict = lang === 'fr' ? FR : EN;
+    for (const el of i18nEls) el.innerHTML = dict[el.dataset.i18n];
+    document.documentElement.lang = lang;
+  }
+  let stored = null;
+  try { stored = localStorage.getItem('lang'); } catch (e) {}
+  setLang(stored || ((navigator.language || '').toLowerCase().startsWith('fr') ? 'fr' : 'en'));
+  $('lang').addEventListener('click', () => {
+    const next = document.documentElement.lang === 'fr' ? 'en' : 'fr';
+    setLang(next);
+    try { localStorage.setItem('lang', next); } catch (e) {}
+  });
+
+  // Build the two reel hubs (the eyes).
+  const EYES = [{ el: $('hubL'), cx: 220, cy: 185, lx: 0, ly: 0 },
+                { el: $('hubR'), cx: 420, cy: 185, lx: 0, ly: 0 }];
+  for (const eye of EYES) {
+    const add = (tag, attrs) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      eye.el.appendChild(n);
+    };
+    add('circle', { r: 21, fill: '#f6efdf' });
+    add('circle', { r: 12, fill: '#151412' });
+    for (let i = 0; i < 6; i++) {
+      add('rect', { x: -2.5, y: -14, width: 5, height: 7, fill: '#f6efdf', transform: `rotate(${i * 60})` });
+    }
+  }
+
+  // Pointer state.
+  const ptr = { inside: false, nx: 0, ny: 0, sx: 320, sy: 400, lastX: 0, lastY: 0, energy: 0 };
+  let hoverLink = false;
+
+  addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect();
+    ptr.sx = (e.clientX - r.left) / r.width * 640;
+    ptr.sy = (e.clientY - r.top) / r.height * 470;
+    ptr.nx = clamp(e.clientX / innerWidth * 2 - 1, -1, 1);
+    ptr.ny = clamp((e.clientY - (r.top + r.height * 0.4)) / (innerHeight * 0.5), -1, 1);
+    if (ptr.inside) ptr.energy += Math.hypot(e.clientX - ptr.lastX, e.clientY - ptr.lastY);
+    ptr.lastX = e.clientX; ptr.lastY = e.clientY;
+    ptr.inside = true;
+  });
+  document.documentElement.addEventListener('pointerleave', () => { ptr.inside = false; });
+  addEventListener('blur', () => { ptr.inside = false; });
+
+  for (const a of document.querySelectorAll('.deck a, .tracks a')) {
+    a.addEventListener('pointerenter', () => { hoverLink = true; });
+    a.addEventListener('pointerleave', () => { hoverLink = false; });
+    a.addEventListener('focus', () => { hoverLink = true; });
+    a.addEventListener('blur', () => { hoverLink = false; });
+  }
+
+  // Transport.
+  const BASE = reduced ? 0 : 0.7;      // rad/s while idling
+  const SIDE = 30;                     // seconds of idle play for a full side
+  let omega = BASE, angle = 0, boost = 0;
+  let progress = 0.15;                 // 0 = fully rewound, 1 = end of side
+  let rewinding = false, rewindStart = 0;
+
+  function rewind() {
+    if (rewinding) return;
+    rewinding = true;
+    rewindStart = performance.now();
+    $('nosePlay').setAttribute('visibility', 'hidden');
+    $('noseRew').setAttribute('visibility', 'visible');
+  }
+  function play() {
+    rewinding = false;
+    $('nosePlay').setAttribute('visibility', 'visible');
+    $('noseRew').setAttribute('visibility', 'hidden');
+    mouth.curve.v += 260;              // tape springs back out
+  }
+  svg.addEventListener('click', rewind);
+  $('rewind').addEventListener('click', rewind);
+  addEventListener('keydown', e => {
+    if (e.key === 'r' || e.key === 'R') rewind();
+  });
+  addEventListener('wheel', e => { boost = clamp(boost + e.deltaY * 0.03, -20, 20); }, { passive: true });
+
+  // Mouth springs.
+  const spring = x => ({ x, v: 0 });
+  const mouth = { curve: spring(20), asym: spring(0), shift: spring(0),
+                  wrinkle: spring(0), pucker: spring(0) };
+  function step(s, target, dt) {
+    if (forced) { s.x = target; s.v = 0; return; }   // #pucker etc.: static preview
+    s.v += ((target - s.x) * 130 - s.v * 9) * dt;
+    s.x += s.v * dt;
+  }
+
+  // Random expressions, played now and then on top of the pointer tracking.
+  const EXPRESSIONS = ['pucker', 'wrinkle', 'smirk'];
+  const forced = EXPRESSIONS.includes(location.hash.slice(1)) ? location.hash.slice(1) : null;
+  let expr = null, exprSide = 1, exprUntil = 0, nextExpr = performance.now() + 2500;
+
+  // The strand is sampled point by point: a smile curve, plus ripples
+  // (wrinkle), blended towards a little "o" loop (pucker).
+  const LX = 215, RX = 425, Y0 = 356, N = 90;
+  const XC = (LX + RX) / 2, LOOP_R = 15, LOOP_A = 0.36, LOOP_B = 0.64;
+  function mouthPath(now, jitter) {
+    const m = mouth;
+    const c1x = LX + 55 + m.shift.x, c2x = RX - 55 + m.shift.x;
+    const a = clamp(m.asym.x, -m.curve.x, m.curve.x);   // never pull a side upwards
+    const c1y = Y0 + m.curve.x + a, c2y = Y0 + m.curve.x - a;
+    const P = clamp(m.pucker.x, 0, 1.15), W = m.wrinkle.x;
+    let d = '';
+    for (let i = 0; i <= N; i++) {
+      const u = i / N, v = 1 - u;
+      // smile: cubic Bezier between the two exits of the shell
+      let x = v * v * v * LX + 3 * v * v * u * c1x + 3 * v * u * u * c2x + u * u * u * RX;
+      let y = v * v * v * Y0 + 3 * v * v * u * c1y + 3 * v * u * u * c2y + u * u * u * Y0;
+      const env = Math.sin(Math.PI * u);
+      y += W * Math.sin(u * Math.PI * 13 + now / 140) * env;
+      if (jitter) y += (Math.random() - 0.5) * jitter * env;
+      if (P > 0.001) {
+        // pucker: taut strand with a small loop in the middle
+        let px, py;
+        if (u < LOOP_A) { px = LX + (XC - LX) * u / LOOP_A; py = Y0 + 5 * u / LOOP_A; }
+        else if (u > LOOP_B) { px = RX + (XC - RX) * v / (1 - LOOP_B); py = Y0 + 5 * v / (1 - LOOP_B); }
+        else {
+          const t = (u - LOOP_A) / (LOOP_B - LOOP_A) * Math.PI * 2;
+          px = XC + LOOP_R * Math.sin(t); py = Y0 + 5 + LOOP_R * (1 - Math.cos(t));
+        }
+        x += (px - x) * P; y += (py - y) * P;
+      }
+      if (y < Y0) y = Y0;               // the tape never climbs back over the shell
+      d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }
+    return d;
+  }
+
+  const spoolR = f => Math.sqrt(24 * 24 + (44 * 44 - 24 * 24) * f);
+  let last = performance.now();
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    // Reels.
+    const wanted = rewinding ? -28 : hoverLink ? 7 : BASE;
+    omega += (wanted - omega) * Math.min(1, dt * 6);
+    boost *= Math.pow(0.05, dt);
+    const w = omega + boost;
+    angle += w * dt;
+    progress = clamp(progress + w * dt / (0.7 * SIDE), 0, 1);
+    if (rewinding && progress <= 0 && now - rewindStart > 700) play();
+    else if (!rewinding && progress >= 1) rewind();
+
+    $('spoolL').setAttribute('r', spoolR(1 - progress).toFixed(1));
+    $('spoolR').setAttribute('r', spoolR(progress).toFixed(1));
+    $('counter').textContent = String(Math.floor(progress * 999)).padStart(3, '0');
+
+    // Eyes look at the pointer and spin.
+    for (const eye of EYES) {
+      let tx = 0, ty = 0;
+      if (ptr.inside) {
+        const dx = ptr.sx - eye.cx, dy = ptr.sy - eye.cy;
+        const d = Math.hypot(dx, dy) || 1;
+        const k = Math.min(6, d * 0.04) / d;
+        tx = dx * k; ty = dy * k;
+      }
+      eye.lx += (tx - eye.lx) * Math.min(1, dt * 10);
+      eye.ly += (ty - eye.ly) * Math.min(1, dt * 10);
+      eye.el.setAttribute('transform',
+        `translate(${(eye.cx + eye.lx).toFixed(2)} ${(eye.cy + eye.ly).toFixed(2)}) rotate(${(angle * 57.2958 % 360).toFixed(1)})`);
+    }
+
+    // Mouth.
+    ptr.energy *= Math.pow(0.02, dt);
+    if (forced) { expr = forced; }
+    else if (reduced || rewinding || hoverLink || now > exprUntil) {
+      if (expr) nextExpr = now + 3000 + Math.random() * 5000;
+      expr = null;
+    }
+    if (!forced && !expr && !reduced && !rewinding && !hoverLink && now > nextExpr) {
+      expr = EXPRESSIONS[Math.floor(Math.random() * EXPRESSIONS.length)];
+      exprSide = Math.random() < 0.5 ? -1 : 1;
+      exprUntil = now + 1300 + Math.random() * 1300;
+    }
+
+    let curve, asym, shift, wrinkle = 0, pucker = 0;
+    if (rewinding) {                    // tape pulled taut
+      curve = 0; asym = 0; shift = 0;
+    } else if (hoverLink) {             // big grin
+      curve = 85; asym = ptr.nx * 8; shift = ptr.nx * 20;
+    } else if (!ptr.inside) {           // idle, breathing
+      curve = 18 + (reduced ? 0 : Math.sin(now / 900) * 5); asym = 0; shift = 0;
+    } else {                            // follows the pointer
+      curve = 40 + ptr.ny * 34;       // always hangs below the shell
+      asym = ptr.nx * 16;
+      shift = ptr.nx * 28;
+      wrinkle = Math.min(4, ptr.energy * 0.03);   // quivers when you move fast
+    }
+    if (expr === 'pucker') { pucker = 1; }
+    else if (expr === 'wrinkle') { curve = 14; asym = 0; wrinkle = 8; }
+    else if (expr === 'smirk') { curve = 36; asym = exprSide * 30; shift = exprSide * 30; }
+
+    step(mouth.curve, curve, dt);
+    step(mouth.asym, asym, dt);
+    step(mouth.shift, shift, dt);
+    step(mouth.wrinkle, wrinkle, dt);
+    step(mouth.pucker, pucker, dt);
+    mouth.curve.x = clamp(mouth.curve.x, 0, 130);
+    const d = mouthPath(now, rewinding ? 5 : 0);
+    $('mouth').setAttribute('d', d);
+    $('mouthHi').setAttribute('d', d);
+
+    // Headband tails flap with the reel speed.
+    const t = reduced ? 0 : now / 1000;
+    const wind = Math.min(3, 1 + Math.abs(w) * 0.12);
+    const dir = w < -3 ? -1 : 1;
+    const a = Math.sin(t * 2.2 * wind) * 10 * wind, b = Math.cos(t * 1.7 * wind) * 9 * wind;
+    $('tail1').setAttribute('d',
+      `M603 60Q${625} ${(50 - dir * 14 + a).toFixed(1)} ${650} ${(40 - dir * 22 + b).toFixed(1)}`);
+    $('tail2').setAttribute('d',
+      `M603 66Q${622} ${(82 + b).toFixed(1)} ${640} ${(100 + a - dir * 6).toFixed(1)}`);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
 </body>
-</html> 
+</html>
