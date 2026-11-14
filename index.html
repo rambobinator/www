@@ -111,9 +111,10 @@
 
   /* Deck: links as the piano keys of an old radio-cassette player */
   .deck {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    /* equal-width keys that always fill their rows: 3, 4 or 7 across */
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(36rem, 100%);
     gap: 4px;
     row-gap: 14px;
     margin-top: 0.75rem;
@@ -128,8 +129,9 @@
     flex-direction: column;
     align-items: center;
     gap: 0.45rem;
-    min-width: 5.4rem;
-    padding: 0.6rem 0.7rem 0.75rem;
+    min-width: 0;
+    padding: 0.7rem 0.25rem 0.85rem;
+    white-space: nowrap;
     font: inherit;
     font-size: 0.8rem;
     font-weight: 700;
@@ -159,7 +161,16 @@
     outline: none;
   }
   .key:active .led, .key:focus-visible .led { background: var(--red); box-shadow: 0 0 8px var(--red); }
-  #rewind { color: var(--red); }
+  #rewind { color: var(--red); grid-column: 1 / -1; }
+  @media (min-width: 24rem) {
+    .deck { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    #rewind { grid-column: span 2; }
+  }
+  @media (min-width: 40rem) {
+    .deck { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .key { font-size: 0.72rem; padding-block: 0.6rem 0.75rem; }
+    #rewind { grid-column: auto; }
+  }
   #rewind:active .led, #rewind:focus-visible .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
   /* hover only where a real pointer exists, so keys don't stay stuck down after a tap */
   @media (hover: hover) {
@@ -195,7 +206,6 @@
   #lang:focus-visible { outline: 2px solid var(--red); border-radius: 4px; }
 
   @media (max-width: 30rem) {
-    .key { min-width: 4.6rem; }
     p.just { text-align: left; }
   }
   @media (prefers-reduced-motion: reduce) { .key, #lang .slot::after { transition: none; } }
@@ -295,6 +305,7 @@
   <a class="key" href="https://registry.jsonresume.org/rambobinator"><i class="led"></i><span data-i18n="resume">Resume</span></a>
   <a class="key" rel="me" href="https://www.linkedin.com/in/roman-masse"><i class="led"></i>LinkedIn</a>
   <a class="key" rel="me" href="https://github.com/rambobinator"><i class="led"></i>GitHub</a>
+  <a class="key" href="https://rambobinator.github.io/blog/"><i class="led"></i>Blog</a>
   <a class="key" id="mail" href="#"><i class="led"></i><span data-i18n="mail">Mail</span></a>
   <a class="key" href="rmasse.vcf"><i class="led"></i>vCard</a>
   <button class="key" id="rewind" type="button" aria-label="Rewind the tape"><i class="led"></i>◀◀&#xFE0E; REW</button>
