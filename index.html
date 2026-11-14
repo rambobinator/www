@@ -6,8 +6,12 @@
 <title>rambobinator — Roman Masse</title>
 <meta name="description" content="Roman Masse, a.k.a. rambobinator. Lead software engineer for AI solutions at Septeo, former cook in Michelin-starred restaurants.">
 <meta name="theme-color" content="#efe7d6">
+<link rel="canonical" href="https://roman.masse.family/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
 <meta property="og:url" content="https://roman.masse.family/">
 <meta property="og:title" content="rambobinator — Roman Masse">
 <meta property="og:description" content="Lead software engineer for AI solutions at Septeo, former cook in Michelin-starred restaurants.">
@@ -15,6 +19,23 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Roman Masse",
+  "alternateName": "rambobinator",
+  "url": "https://roman.masse.family/",
+  "image": "https://roman.masse.family/og.png",
+  "jobTitle": "Lead software engineer, AI solutions",
+  "worksFor": { "@type": "Organization", "name": "Septeo", "url": "https://www.septeo.com/" },
+  "sameAs": [
+    "https://github.com/rambobinator",
+    "https://www.linkedin.com/in/roman-masse"
+  ]
+}
+</script>
+<noscript><style>#mail, #rewind, #lang, .hint { display: none; }</style></noscript>
 <style>
   :root {
     --paper: #efe7d6;
@@ -131,16 +152,26 @@
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
     transition: background 0.1s, box-shadow 0.1s;
   }
-  .key:hover, .key:focus-visible {
+  .key:active, .key:focus-visible {
     transform: translateY(6px);
     background: linear-gradient(#d9d2c0, #bdb5a2);
     box-shadow: inset 0 1px 0 #f3ecdb, 0 1px 0 #8f8878, 0 2px 2px rgba(0, 0, 0, 0.55);
     outline: none;
   }
-  .key:active { transform: translateY(7px); }
-  .key:hover .led, .key:focus-visible .led { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .key:active .led, .key:focus-visible .led { background: var(--red); box-shadow: 0 0 8px var(--red); }
   #rewind { color: var(--red); }
-  #rewind:hover .led, #rewind:focus-visible .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  #rewind:active .led, #rewind:focus-visible .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  /* hover only where a real pointer exists, so keys don't stay stuck down after a tap */
+  @media (hover: hover) {
+    .key:hover {
+      transform: translateY(6px);
+      background: linear-gradient(#d9d2c0, #bdb5a2);
+      box-shadow: inset 0 1px 0 #f3ecdb, 0 1px 0 #8f8878, 0 2px 2px rgba(0, 0, 0, 0.55);
+    }
+    .key:hover .led { background: var(--red); box-shadow: 0 0 8px var(--red); }
+    #rewind:hover .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  }
+  .key:active { transform: translateY(7px); }
 
   /* Language slide switch */
   #lang {
@@ -163,7 +194,10 @@
   html[lang="en"] #lang .en, html[lang="fr"] #lang .fr { opacity: 1; }
   #lang:focus-visible { outline: 2px solid var(--red); border-radius: 4px; }
 
-  @media (max-width: 30rem) { .key { min-width: 4.6rem; } }
+  @media (max-width: 30rem) {
+    .key { min-width: 4.6rem; }
+    p.just { text-align: left; }
+  }
   @media (prefers-reduced-motion: reduce) { .key, #lang .slot::after { transition: none; } }
 </style>
 </head>
@@ -259,8 +293,8 @@
 
 <nav class="deck" aria-label="Links about me">
   <a class="key" href="https://registry.jsonresume.org/rambobinator"><i class="led"></i><span data-i18n="resume">Resume</span></a>
-  <a class="key" href="https://www.linkedin.com/in/roman-masse"><i class="led"></i>LinkedIn</a>
-  <a class="key" href="https://github.com/rambobinator"><i class="led"></i>GitHub</a>
+  <a class="key" rel="me" href="https://www.linkedin.com/in/roman-masse"><i class="led"></i>LinkedIn</a>
+  <a class="key" rel="me" href="https://github.com/rambobinator"><i class="led"></i>GitHub</a>
   <a class="key" id="mail" href="#"><i class="led"></i><span data-i18n="mail">Mail</span></a>
   <a class="key" href="rmasse.vcf"><i class="led"></i>vCard</a>
   <button class="key" id="rewind" type="button" aria-label="Rewind the tape"><i class="led"></i>◀◀&#xFE0E; REW</button>
@@ -301,13 +335,28 @@
     resume: 'CV',
     mail: 'E-mail',
     hint: 'bougez la souris · défilez pour faire tourner · cliquez sur la cassette pour rembobiner',
+    hintTouch: 'touchez la cassette pour rembobiner',
+    desc: `Roman Masse, alias rambobinator. Lead software engineer sur les solutions d'IA chez Septeo, ancien cuisinier en restaurants étoilés.`,
+    k7: `Une cassette audio en forme de visage : ses bobines sont des yeux et sa bande magnétique sortie du boîtier est une bouche qui suit votre pointeur. Cliquez dessus pour rembobiner.`,
+    rew: 'Rembobiner la cassette',
   };
-  const EN = {};
+  const metaDesc = document.querySelector('meta[name="description"]');
+  const EN = {
+    hintTouch: 'tap the tape to rewind',
+    desc: metaDesc.content,
+    k7: svg.getAttribute('aria-label'),
+    rew: $('rewind').getAttribute('aria-label'),
+  };
   const i18nEls = document.querySelectorAll('[data-i18n]');
   for (const el of i18nEls) EN[el.dataset.i18n] = el.innerHTML;
+  // No mouse, no wheel: the hint only mentions what a finger can do.
+  if (matchMedia('(hover: none)').matches) document.querySelector('.hint').dataset.i18n = 'hintTouch';
   function setLang(lang) {
     const dict = lang === 'fr' ? FR : EN;
     for (const el of i18nEls) el.innerHTML = dict[el.dataset.i18n];
+    metaDesc.content = dict.desc;
+    svg.setAttribute('aria-label', dict.k7);
+    $('rewind').setAttribute('aria-label', dict.rew);
     document.documentElement.lang = lang;
   }
   let stored = null;
@@ -382,6 +431,7 @@
   svg.addEventListener('click', rewind);
   $('rewind').addEventListener('click', rewind);
   addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;   // leave Cmd/Ctrl+R to the browser
     if (e.key === 'r' || e.key === 'R') rewind();
   });
   addEventListener('wheel', e => { boost = clamp(boost + e.deltaY * 0.03, -20, 20); }, { passive: true });
@@ -440,7 +490,17 @@
   const spoolR = f => Math.sqrt(24 * 24 + (44 * 44 - 24 * 24) * f);
   let last = performance.now();
 
+  // Only animate while the cassette is on screen.
+  let visible = true, running = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      visible = entries[entries.length - 1].isIntersecting;
+      if (visible && !running) { running = true; requestAnimationFrame(frame); }
+    }, { rootMargin: '80px' }).observe(svg);
+  }
+
   function frame(now) {
+    if (!visible) { running = false; return; }
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
 
