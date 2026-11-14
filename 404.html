@@ -37,6 +37,10 @@
   @media (prefers-reduced-motion: reduce) { #tangle { animation: none; } }
 </style>
 <script>
+  // /blog/<anything> lives on the blog's own GitHub Pages site.
+  if (location.pathname.indexOf('/blog/') === 0) {
+    location.replace('https://rambobinator.github.io' + location.pathname + location.search + location.hash);
+  }
   // Same choice as the homepage: stored preference first, then the browser language.
   (function () {
     var lang = null;
